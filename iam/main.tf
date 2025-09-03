@@ -6,6 +6,10 @@ variable name {
   type = string
 }
 
+variable project_name {
+  type = string
+}
+
 variable aws_managed_policy_arns {
   type    = list(string)
   default = []
@@ -14,7 +18,7 @@ variable aws_managed_policy_arns {
 # ==================================================================================
 
 resource "aws_iam_policy" "iam-policy" {
-  name        = "iam-policy-${var.name}"
+  name        = "iam-policy-${var.project_name}-${var.name}"
   path        = "/"
 
   # Terraform's "jsonencode" function converts a
@@ -25,7 +29,8 @@ resource "aws_iam_policy" "iam-policy" {
       {
         Action = [
           "ecs:*",
-          "ssm:*"
+          "ssm:*",
+          "s3:*"
         ]
         Effect   = "Allow"
         Resource = "*"
@@ -36,7 +41,7 @@ resource "aws_iam_policy" "iam-policy" {
 
 //both need assume role policy, as they are assumed by ecs-tasks
 resource "aws_iam_role" "iam-role" {
-  name = "iam-role-${var.name}"
+  name = "iam-role-${var.project_name}-${var.name}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -64,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "aws-policy-attach" {
 }
 
 resource "aws_iam_instance_profile" "iam-profile" {
-  name = "iam-profile-${var.name}"
+  name = "iam-profile-${var.project_name}-${var.name}"
   role = aws_iam_role.iam-role.name
 }
 
