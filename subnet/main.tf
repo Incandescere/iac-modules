@@ -10,6 +10,10 @@ variable vpc_id {
     type = string
 }
 
+variable project_name {
+    type = string
+}
+
 # ==================================================================================
 
 resource "aws_subnet" "subnets" {
@@ -19,7 +23,7 @@ resource "aws_subnet" "subnets" {
     availability_zone = var.subnets_list[count.index][2]
 
     tags = {
-        Name = var.subnets_list[count.index][0]
+        Name = "subnet-${var.project_name}-${var.subnets_list[count.index][0]}"
     }
 }
 

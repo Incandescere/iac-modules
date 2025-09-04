@@ -14,13 +14,17 @@ variable name {
     type = string
 }
 
+variable project_name {
+    type = string
+}
+
 # ==================================================================================
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = var.vpc_id
 
   tags = {
-    Name = var.name
+    Name = "igw-${var.project_name}-${var.name}"
   }
 }
 
