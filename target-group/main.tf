@@ -6,6 +6,11 @@ variable name {
     type = string
 }
 
+variable project_name {
+    type = string
+}
+
+
 variable vpc_id {
     type = string
 }
@@ -25,7 +30,7 @@ variable ip_addrs {
 # ==================================================================================
 
 resource "aws_lb_target_group" "tg" {
-  name        = "${var.name}-tg"
+  name        = "tg-${var.project_name}-${var.name}"
   port        = var.tg_port
   protocol    = var.tg_protocol
   target_type = "ip"

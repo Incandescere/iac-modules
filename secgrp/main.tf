@@ -6,6 +6,10 @@ variable name {
     type = string
 }
 
+variable project_name {
+    type = string
+}
+
 variable vpc_id {
     type = string
 }
@@ -19,14 +23,14 @@ variable outbound_rules {
 }
 
 # in/egress rules are of the format
-# inegress_rule = [
+# inbound_rules/outbound_rules = [
 #     ["protocol", "cidr_1", "from_port", "to_port"], 
 #     ["protocol", "cidr_2", "from_port", "to_port"]
 # ]
 
 # ==================================================================================
 resource "aws_security_group" "secgrp" {
-    name        = "${var.name}-secgrp"
+    name        = "secgrp-${var.project_name}-${var.name}"
     description = "Allow all inbound HTTP traffic and all outbound traffic"
     vpc_id      = var.vpc_id
 }

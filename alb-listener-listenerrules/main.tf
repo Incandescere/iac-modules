@@ -6,6 +6,10 @@ variable name {
     type = string
 }
 
+variable project_name {
+    type = string
+}
+
 variable subnets {
     type = list(string)
 }
@@ -39,7 +43,7 @@ variable log_bucket {
 
 # ==================================================================================
 resource "aws_lb" "alb" {
-  name               = "${var.name}-alb"
+  name               = "alb-${var.project_name}-${var.name}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = var.secgrps
