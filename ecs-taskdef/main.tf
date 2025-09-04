@@ -65,8 +65,8 @@ variable containerPort {
 data "template_file" "ecstpl" {
   template = file(var.td_template)
   vars = {
-    portName       = "port-${var.portName}"
-    containerName  = "container-${var.containerName}"
+    portName       = "port-${var.project_name}-${var.portName}"
+    containerName  = "container-${var.project_name}-${var.containerName}"
     image          = var.image 
     loggroup       = var.loggroup
     containerPort  = var.containerPort

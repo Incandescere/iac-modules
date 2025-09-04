@@ -6,6 +6,14 @@ variable name {
   type = string
 }
 
+variable project_name {
+  type = string
+}
+
+variable container_port {
+  type = number
+}
+
 variable cluster_id {
   type = string
 }
@@ -26,12 +34,23 @@ variable secgrps_list {
   type = list(string)
 }
 
+variable sc_enabled {
+  type = bool
+}
+
 variable svc_conn_namespace {
   type = string
+  default = ""
 }
 
 variable svc_conn_port {
   type = number
+  default = 1
+}
+
+variable public_cluster {
+  type = bool
+  default = false
 }
 
 # ----------------------------------------------------------------------------------
@@ -84,7 +103,7 @@ variable max_capacity {
 # ==================================================================================
 
 resource "aws_ecs_service" "ecs-svc" {
-  name            = "${var.name}-ecs-svc"
+  name            = "ecs-svc-${var.project_name}-${var.name}"
   cluster         = var.cluster_id
   task_definition = var.task_definition_arn
   launch_type     = "FARGATE"
@@ -93,18 +112,22 @@ resource "aws_ecs_service" "ecs-svc" {
   network_configuration {
     subnets          = var.subnets_list
     security_groups  = var.secgrps_list
+    assign_public_ip = var.public_cluster
   }
+  
+  dynamic "service_connect_configuration" {
+    for_each = var.sc_enabled ? [1] : []
+    content {
+      enabled = var.sc_enabled
 
-  service_connect_configuration {
-    enabled   = true
-    namespace = var.svc_conn_namespace
+      service {
+        port_name      = var.name
+        discovery_name = "cloudmap-${var.name}"
 
-    service {
-      port_name       = var.name
-      discovery_name  = "cloudmap-${var.name}"
-      client_alias {
-        dns_name = "svc-conn-${var.name}"
-        port     = var.svc_conn_port
+        client_alias {
+          dns_name = "svc-conn-${var.name}"
+          port     = var.svc_conn_port
+        }
       }
     }
   }
@@ -113,8 +136,8 @@ resource "aws_ecs_service" "ecs-svc" {
     for_each = var.tg_arn_list
     content {
       target_group_arn  = var.tg_arn_list[0]
-      container_name    = "${var.name}-container"
-      container_port    = var.svc_conn_port
+      container_name  = "container-${var.project_name}-${var.name}"
+      container_port    = var.container_port
     }
   }
 }
@@ -124,7 +147,7 @@ resource "aws_ecs_service" "ecs-svc" {
 resource "aws_appautoscaling_target" "ecs_target" {
   max_capacity       = var.max_capacity
   min_capacity       = var.min_capacity
-  resource_id        = "service/${var.clusterName}/${var.name}-ecs-svc"
+  resource_id        = "service/${var.clusterName}/ecs-svc-${var.project_name}-${var.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }
