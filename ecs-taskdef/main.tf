@@ -6,6 +6,10 @@ variable name {
   type = string
 }
 
+variable project_name {
+  type = string
+}
+
 variable execution_role_arn {
   type = string
 }
@@ -61,8 +65,8 @@ variable containerPort {
 data "template_file" "ecstpl" {
   template = file(var.td_template)
   vars = {
-    portName       = var.portName
-    containerName  = var.containerName
+    portName       = "port-${var.portName}"
+    containerName  = "container-${var.containerName}"
     image          = var.image 
     loggroup       = var.loggroup
     containerPort  = var.containerPort
@@ -71,7 +75,7 @@ data "template_file" "ecstpl" {
 
 //only supporting fargate for now
 resource "aws_ecs_task_definition" "taskdef" {
-  family                   = var.name
+  family                   = "td-${var.project_name}-${var.name}"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = var.execution_role_arn
   task_role_arn            = var.task_role_arn
