@@ -10,6 +10,10 @@ variable name {
     type = string
 }
 
+variable project_name {
+    type = string
+}
+
 # ==================================================================================
 
 resource "aws_vpc" "vpc" {
@@ -19,7 +23,7 @@ resource "aws_vpc" "vpc" {
     enable_dns_support   = true
     enable_dns_hostnames = true
     tags = {
-        Name = var.name
+        Name = "vpc-${var.project_name}-${var.name}"
     }
 }
 
