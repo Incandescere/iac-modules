@@ -119,9 +119,9 @@ resource "aws_ecs_service" "ecs-svc" {
     for_each = var.sc_enabled ? [1] : []
     content {
       enabled = var.sc_enabled
-
+      namespace = var.svc_conn_namespace
       service {
-        port_name      = var.name
+        port_name      = "port-${var.project_name}-${var.name}"
         discovery_name = "cloudmap-${var.name}"
 
         client_alias {

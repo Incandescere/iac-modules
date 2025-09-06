@@ -27,6 +27,11 @@ variable ip_addrs {
     type = list(string)
 }
 
+variable health_check_path {
+    type = string
+    default = "/"
+}
+
 # ==================================================================================
 
 resource "aws_lb_target_group" "tg" {
@@ -35,6 +40,10 @@ resource "aws_lb_target_group" "tg" {
   protocol    = var.tg_protocol
   target_type = "ip"
   vpc_id      = var.vpc_id
+
+  health_check {
+    path = var.health_check_path
+  }
 }
 
 resource "aws_lb_target_group_attachment" "tgattach" {
