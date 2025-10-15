@@ -10,6 +10,11 @@ variable project_name {
   type = string
 }
 
+variable policy_service_list {
+  type    = list(string)
+  default = []
+} 
+
 variable aws_managed_policy_arns {
   type    = list(string)
   default = []
@@ -28,9 +33,7 @@ resource "aws_iam_policy" "iam-policy" {
     Statement = [
       {
         Action = [
-          "ecs:*",
-          "ssm:*",
-          "s3:*"
+          for svc in var.policy_service_list: "${svc}:*"
         ]
         Effect   = "Allow"
         Resource = "*"
