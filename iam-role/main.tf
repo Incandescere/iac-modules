@@ -48,7 +48,7 @@ resource "aws_iam_policy" "iam-policy" {
     Statement = [
       {
         Action = [
-          for svc in var.policy_service_list: "${svc}:*"
+          for svc in var.policy_service_list: "${svc}"
         ]
         Effect   = "Allow"
         Resource = "*"
