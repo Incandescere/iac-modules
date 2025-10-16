@@ -6,7 +6,7 @@ variable name {
   type = string
 }
 
-variable proj_name {
+variable project_name {
   type = string
 }
 
@@ -19,14 +19,6 @@ variable execution_role_arn {
   type = string
 }
 
-variable description {
-  type = string
-}
-
-variable env_vars {
-  type = list(map(string))
-}
-
 variable filename {
   type = string
 }
@@ -37,29 +29,35 @@ variable handler {
 
 variable runtime {
   type = string
-  default = "python 3.12"
+  default = "python3.12"
+}
+
+variable env_vars {
+  type = map(string)
 }
 
 # ==================================================================================
 
 resource "aws_lambda_function" "lambda_zip" {
   count = var.package_type == "Zip"? 1 : 0
-  function_name = "lambda-${var.proj_name}-${var.name}"
+  function_name = "lambda-${var.project_name}-${var.name}"
   package_type = var.package_type
   role = var.execution_role_arn
-  description = var.description
-  env_vars = var.env_vars
+  description = "Lambda function for ${var.project_name}, ${var.name}"
   filename = var.filename
   handler = var.handler
   runtime = var.runtime
+  environment {
+    variables = var.env_vars
+  }
 }
 
 # ==================================================================================
 
 output zip_arn {
-  value = aws_lambda_function.lambda_zip.arn
+  value = aws_lambda_function.lambda_zip[*].arn
 }
 
 output zip_id {
-  value = aws_lambda_function.lambda_zip.id
+  value = aws_lambda_function.lambda_zip[*].id
 }
