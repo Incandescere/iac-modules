@@ -48,7 +48,7 @@ resource "aws_lambda_function" "lambda_zip" {
   handler = var.handler
   runtime = var.runtime
   environment {
-    variables = var.env_vars
+    variables = length(var.env_vars) > 0 ? jsonencode(var.env_vars) : null
   }
 }
 
