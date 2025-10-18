@@ -34,6 +34,7 @@ variable runtime {
 
 variable env_vars {
   type = map(string)
+  default = {}
 }
 
 # ==================================================================================
@@ -48,7 +49,7 @@ resource "aws_lambda_function" "lambda_zip" {
   handler = var.handler
   runtime = var.runtime
   environment {
-    variables = length(var.env_vars) > 0 ? jsonencode(var.env_vars) : null
+    variables = length(var.env_vars) > 0 ? var.env_vars : null
   }
 }
 
