@@ -37,6 +37,10 @@ variable env_vars {
   default = {}
 }
 
+variable layers {
+  type = list(string)
+}
+
 # ==================================================================================
 
 resource "aws_lambda_function" "lambda_zip" {
@@ -51,6 +55,7 @@ resource "aws_lambda_function" "lambda_zip" {
   environment {
     variables = length(var.env_vars) > 0 ? var.env_vars : null
   }
+  layers = length(var.layers) > 0 ? var.layers : null
 }
 
 # ==================================================================================
