@@ -32,6 +32,11 @@ variable runtime {
   default = "python3.12"
 }
 
+variable timeout {
+  type = string
+  default = "60"
+}
+
 variable env_vars {
   type = map(string)
   default = {}
@@ -52,6 +57,7 @@ resource "aws_lambda_function" "lambda_zip" {
   filename = var.filename
   handler = var.handler
   runtime = var.runtime
+  timeout = var.timeout
   environment {
     variables = length(var.env_vars) > 0 ? var.env_vars : null
   }
